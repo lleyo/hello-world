@@ -14,7 +14,7 @@ def depsScript = "" +
 "import subprocess\n" +
 "from subprocess import CalledProcessError, check_output\n" +
 "try:\n" +
-"   output = subprocess.check_output(['java', '-jar', 'C:/proyectos/XLRelease/gitXlRelease/restAPI/target/restAPI-0.1.0-SNAPSHOT.jaras', '${release.id}'])\n" +
+"   output = subprocess.check_output(['java', '-jar', 'C:/proyectos/XLRelease/gitXlRelease/restAPI/target/restAPI-0.1.0-SNAPSHOT.jar', '${release.id}'])\n" +
 "except CalledProcessError as e:    \n" +
 "    output = e.output\n" +
 "    print(output)\n" +
