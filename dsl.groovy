@@ -1,3 +1,6 @@
+import java.util.List;
+import com.xebialabs.xlrelease.domain.variables.Variable;
+
 def server(type, title) {
   def cis = configurationApi.searchByTypeAndTitle(type, title)
   if (cis.isEmpty()) {
@@ -10,11 +13,13 @@ def server(type, title) {
 }
 def xlJenkinsServer = server('jenkins.Server','Jenkins orquestacion')
 
+def pathRestAPIJar = "C:/proyectos/XLRelease/gitXlRelease/restAPI/target/restAPI-0.1.0-SNAPSHOT.jar"
+
 def depsScript = "" +
 "import subprocess\n" +
 "from subprocess import CalledProcessError, check_output\n" +
 "try:\n" +
-"   output = subprocess.check_output(['java', '-jar', 'C:/proyectos/XLRelease/gitXlRelease/restAPI/target/restAPI-0.1.0-SNAPSHOT.jar', '\$"+"{release.id}'])\n" +
+"   output = subprocess.check_output(['java', '-jar', '" + pathRestAPIJar + "', '\$"+"{release.id}'])\n" +
 "except CalledProcessError as e:    \n" +
 "    output = e.output\n" +
 "    print(output)\n" +
@@ -23,12 +28,32 @@ def depsScript = "" +
 "    sys.exit(1)\n" +
 "print(output)\n"
 
+print "vars"
+print "${release.id}"
+def releaseName
+def releaseVersion
+List<Variable> vars = releaseApi.getVariables(String.valueOf("${release.id}"))
+for (Variable var : vars) {
+	if ("releaseName".equals(var.getKey())) {
+		releaseName = var.getValue();
+	} else if ("releaseVersion".equals(var.getKey())) {
+		releaseVersion = var.getValue();
+	} 
+}
+print "Name: " + releaseName
+print "Version: " + releaseVersion
+
+print "pinto cosas"
+print releaseName
+
 createdRelease = xlr {
-    release("Hello world release") {
+    release(releaseName + " " + releaseVersion) {
         description "Hello world release description"
 		variables {
-			stringVariable 'statusPlanResult'
-			stringVariable 'releaseCreatedId'
+			stringVariable("statusPlanResult")
+			stringVariable("releaseCreatedId")
+			stringVariable("releaseName")
+			stringVariable("releaseVersion")
 		}	
         phases {
             phase {
